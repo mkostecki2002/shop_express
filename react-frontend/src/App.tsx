@@ -1,3 +1,4 @@
+import React from "react"; 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -19,7 +20,8 @@ const ProtectedRoute = ({
   children,
   role,
 }: {
-  children: JSX.Element;
+  // 2. ZMIEŃ JSX.Element NA React.ReactNode
+  children: React.ReactNode; 
   role?: string;
 }) => {
   const { user, isAuthenticated } = useAuth();
@@ -28,7 +30,8 @@ const ProtectedRoute = ({
   if (role && user?.role !== role)
     return <div className="p-4 text-danger">Brak uprawnień</div>;
 
-  return children;
+  // 3. (Opcjonalnie) Owiń children we fragment, choć przy ReactNode zwykłe zwrócenie też zadziała
+  return <>{children}</>;
 };
 
 function AppRoutes() {
@@ -62,7 +65,7 @@ function AppRoutes() {
         />
 
         <Route
-          path="/init"
+          path="/admin/init"
           element={
             <ProtectedRoute role="ADMIN">
               <AdminInitPage />
@@ -77,13 +80,13 @@ function AppRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <AppProvider>
+      <AppProvider> 
+        <AuthProvider>
+          <CartProvider>
             <AppRoutes />
-          </AppProvider>
-        </CartProvider>
-      </AuthProvider>
+          </CartProvider>
+        </AuthProvider>
+      </AppProvider>
     </BrowserRouter>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { initDatabase } from "../api/services";
 
 export default function AdminInitPage() {

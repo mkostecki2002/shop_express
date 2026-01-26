@@ -54,7 +54,7 @@ export default function ProductListPage() {
     }
 
     if (filterCat) {
-      result = result.filter(p => p.category.name === filterCat);
+      result = result.filter(p => p.category?.name === filterCat);
     }
 
     return result;
@@ -135,7 +135,9 @@ export default function ProductListPage() {
             <tr key={p.id}>
               <td>{p.name}</td>
               <td dangerouslySetInnerHTML={{ __html: p.description }}></td>
-              <td>{p.category.name}</td>
+              {/* ▼▼▼ TUTAJ ZMIANA ▼▼▼ */}
+              <td>{p.category?.name || "Brak kategorii"}</td>
+              {/* ▲▲▲ KONIEC ZMIANY ▲▲▲ */}
               <td>{p.priceUnit} zł</td>
               <td>{p.weightUnit} kg</td>
               <td>
