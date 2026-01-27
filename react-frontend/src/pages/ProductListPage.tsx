@@ -121,7 +121,6 @@ export default function ProductListPage() {
     <div className="container">
       <h2>Produkty</h2>
 
-      {/* Filtry */}
       <div className="row mb-3">
         <div className="col-md-4">
           <input
@@ -148,7 +147,6 @@ export default function ProductListPage() {
         </div>
       </div>
 
-      {/* Tabela */}
       <table className="table table-hover">
         <thead>
           <tr>
@@ -165,9 +163,7 @@ export default function ProductListPage() {
             <tr key={p.id}>
               <td>{p.name}</td>
               <td dangerouslySetInnerHTML={{ __html: p.description }}></td>
-              {/* ▼▼▼ TUTAJ ZMIANA ▼▼▼ */}
               <td>{p.category?.name || "Brak kategorii"}</td>
-              {/* ▲▲▲ KONIEC ZMIANY ▲▲▲ */}
               <td>{p.priceUnit} zł</td>
               <td>{p.weightUnit} kg</td>
               <td>

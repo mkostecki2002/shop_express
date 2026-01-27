@@ -7,7 +7,6 @@ export default function UserOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const { handleError, setIsLoading } = useApp();
 
-  // Modal opinii
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [opinionData, setOpinionData] = useState({ rating: 5, content: "" });
   const { setMessage } = useApp();
@@ -18,7 +17,7 @@ export default function UserOrdersPage() {
 
   const fetchMyOrders = async () => {
     try {
-      const { data } = await getMyOrders(); // Specjalny endpoint dla usera
+      const { data } = await getMyOrders();
       setOrders(data);
     } catch (error: any) {
       handleError(error);
@@ -34,7 +33,7 @@ export default function UserOrdersPage() {
       await addOpinion(selectedOrderId, opinionData);
       setMessage("Dziękujemy za Twoją opinię!");
       setSelectedOrderId(null);
-      fetchMyOrders(); // Odśwież, by ukryć przycisk
+      fetchMyOrders();
     } catch (e: any) {
       handleError(e);
     }

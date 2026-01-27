@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 import { loginUser, logoutUser } from "../api/services";
@@ -18,19 +18,18 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
+  const [user, setUser] = useState<User | null>(() => {
     const token = sessionStorage.getItem("accessToken");
     if (token) {
       try {
-        const decoded = jwtDecode<User>(token);
-        setUser(decoded);
+        return jwtDecode<User>(token);
       } catch {
         sessionStorage.removeItem("accessToken");
+        return null;
       }
     }
-  }, []);
+    return null;
+  });
 
   const login = async (creds: unknown) => {
     const { data } = await loginUser(creds);

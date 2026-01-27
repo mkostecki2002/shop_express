@@ -9,7 +9,6 @@ export const api = axios.create({
   },
 });
 
-// Interceptor do dodawania tokena
 api.interceptors.request.use(
   config => {
     const token = sessionStorage.getItem("accessToken");
@@ -21,7 +20,6 @@ api.interceptors.request.use(
   error => Promise.reject(error),
 );
 
-// Interceptor do obsługi 401 (Refresh Token)
 api.interceptors.response.use(
   response => response,
   async error => {
