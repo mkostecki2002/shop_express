@@ -95,7 +95,6 @@ export default function UserOrdersPage() {
                     <div className="d-flex justify-content-between align-items-center">
                       <h5 className="mb-0">Suma: {total.toFixed(2)} zł</h5>
 
-                      {/* Przycisk Oceny */}
                       {isCompleted && !hasOpinion && (
                         <button
                           className="btn btn-outline-primary"
@@ -118,7 +117,6 @@ export default function UserOrdersPage() {
         </div>
       )}
 
-      {/* MODAL (Prosty overlay) */}
       {selectedOrderId && (
         <div
           className="modal d-block"

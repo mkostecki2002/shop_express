@@ -42,7 +42,6 @@ export default function AdminInitPage() {
       return alert("Niepoprawny format pliku (wymagany JSON lub CSV).");
 
     try {
-      // API oczekuje surowej zawartości w body i odpowiedniego Content-Type
       const contentType = fileContent.trim().startsWith("[")
         ? "application/json"
         : "text/plain";

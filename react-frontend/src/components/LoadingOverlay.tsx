@@ -2,7 +2,7 @@ import React from "react";
 
 interface LoadingOverlayProps {
   isVisible: boolean;
-  message?: string; // Opcjonalna wiadomość np. "Przetwarzanie..."
+  message?: string;
 }
 
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({

@@ -47,7 +47,6 @@ export default function AdminOrdersPage() {
     <div className="container">
       <h2>Panel Zamówień</h2>
 
-      {/* Tabela niezrealizowanych */}
       <div className="card mb-4 border-danger">
         <div className="card-header bg-danger text-white">
           Niezrealizowane Zamówienia

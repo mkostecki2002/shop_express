@@ -28,7 +28,6 @@ const ProtectedRoute = ({
   children,
   role,
 }: {
-  // 2. ZMIEŃ JSX.Element NA React.ReactNode
   children: React.ReactNode;
   role?: string;
 }) => {
@@ -38,12 +37,9 @@ const ProtectedRoute = ({
   if (role && user?.role !== role)
     return <div className="p-4 text-danger">Brak uprawnień</div>;
 
-  // 3. (Opcjonalnie) Owiń children we fragment, choć przy ReactNode zwykłe zwrócenie też zadziała
   return <>{children}</>;
 };
 
-// --- NOWY KOMPONENT: LAYOUT GŁÓWNY ---
-// Ten komponent zawiera elementy widoczne na standardowych stronach
 const MainLayout = () => {
   const { isLoading } = useApp();
 
@@ -96,11 +92,8 @@ function AppRoutes() {
         />
       </Route>
 
-      {/* GRUPA 2: Strony samodzielne (BEZ Navbara i Banerów) */}
-      {/* Są poza MainLayout, więc renderują się na czystej stronie */}
       <Route path="/error-page" element={<ErrorPage />} />
 
-      {/* Catch-all przekierowuje do error-page */}
       <Route path="*" element={<Navigate to="/error-page" replace />} />
     </Routes>
   );
