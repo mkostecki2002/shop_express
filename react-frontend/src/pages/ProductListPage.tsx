@@ -70,7 +70,11 @@ export default function ProductListPage() {
 
   const handleEditClick = (p: Product) => {
     setEditingProduct(p);
-    setEditForm({ ...p });
+    setEditForm({
+      ...p,
+      priceUnit: Number(p.priceUnit),
+      weightUnit: Number(p.weightUnit),
+    });
   };
 
   const totalItems = filteredProducts.length;
@@ -99,7 +103,7 @@ export default function ProductListPage() {
       fetchData();
       setMessage("Produkt zaktualizowany pomyślnie.");
     } catch (e: any) {
-      handleError(e.response?.data?.message || e.message);
+      handleError(e);
     }
   };
 
@@ -109,7 +113,7 @@ export default function ProductListPage() {
       const { data } = await getSeoDescription(editingProduct.id);
       setEditForm(prev => ({ ...prev, description: data }));
     } catch (e: any) {
-      handleError(e.response?.data?.message || e.message);
+      handleError(e);
     }
   };
 
