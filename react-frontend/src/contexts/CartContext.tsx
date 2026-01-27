@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Product } from "../api/services";
-import { useApp } from "./AppContext";
 
 interface CartItem {
   product: Product;
@@ -25,7 +24,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const saved = localStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
   });
-  const { setMessage } = useApp();
 
   // Zapis do localStorage przy każdej zmianie
   useEffect(() => {

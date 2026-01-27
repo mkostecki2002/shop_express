@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getOrders, updateOrderStatus } from "../api/services";
-import type { Order } from "../api/services";
+import type { Order, OrderItem, Opinion } from "../api/services";
 import { useApp } from "../contexts/AppContext";
 
 export default function AdminOrdersPage() {
@@ -47,6 +47,7 @@ export default function AdminOrdersPage() {
     <div className="container">
       <h2>Panel Zamówień</h2>
 
+      {/* Tabela niezrealizowanych */}
       <div className="card mb-4 border-danger">
         <div className="card-header bg-danger text-white">
           Niezrealizowane Zamówienia
@@ -66,7 +67,11 @@ export default function AdminOrdersPage() {
               {unfulfilled.map(o => (
                 <tr key={o.id}>
                   <td>{o.id}</td>
-                  <td>{o.approvalDate || "Brak"}</td>
+                  <td>
+                    {o.approvalDate
+                      ? new Date(o.approvalDate).toLocaleDateString()
+                      : "-"}
+                  </td>
                   <td>{o.username}</td>
                   <td>{o.orderState?.name}</td>
                   <td>
@@ -106,22 +111,24 @@ export default function AdminOrdersPage() {
         </select>
       </div>
 
-      <table className="table table-striped">
+      <table className="table table-striped align-middle">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Data Zatwierdzenia</th>
+            <th>Data</th>
             <th>Wartość</th>
             <th>Status</th>
-            <th>Opinie (D4)</th>
+            <th style={{ minWidth: "250px" }}>Opinie</th>
           </tr>
         </thead>
         <tbody>
           {filteredOrders.map(o => {
             const total = o.orderItems.reduce(
-              (acc, item: any) => acc + item.unitPrice * item.quantity,
+              (acc, item: OrderItem) =>
+                acc + (item.product?.priceUnit || 0) * item.quantity,
               0,
             );
+
             return (
               <tr key={o.id}>
                 <td>{o.id}</td>
@@ -131,16 +138,50 @@ export default function AdminOrdersPage() {
                     : "-"}
                 </td>
                 <td>{total.toFixed(2)} zł</td>
-                <td>{o.orderState?.name}</td>
+                <td>
+                  <span
+                    className={`badge ${
+                      o.orderState?.name === "COMPLETED"
+                        ? "bg-success"
+                        : "bg-secondary"
+                    }`}
+                  >
+                    {o.orderState?.name}
+                  </span>
+                </td>
                 <td>
                   {o.opinions && o.opinions.length > 0 ? (
-                    o.opinions.map((op: any, idx: number) => (
-                      <div key={idx} className="small">
-                        {op.rating}: {op.content}
+                    o.opinions.map((op: Opinion) => (
+                      <div
+                        key={op.id}
+                        className="mb-2 p-2 border rounded bg-white shadow-sm"
+                        style={{ fontSize: "0.9rem" }}
+                      >
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <strong className="text-warning">
+                            {"★".repeat(op.rating)}
+                            <span className="text-muted ms-1 small">
+                              ({op.rating}/5)
+                            </span>
+                          </strong>
+                          {op.createdAt && (
+                            <small
+                              className="text-muted"
+                              style={{ fontSize: "0.75em" }}
+                            >
+                              {new Date(op.createdAt).toLocaleDateString()}
+                            </small>
+                          )}
+                        </div>
+                        <div className="fst-italic text-dark">
+                          "{op.content}"
+                        </div>
                       </div>
                     ))
                   ) : (
-                    <span className="text-muted">Brak</span>
+                    <span className="text-muted small fst-italic">
+                      Brak opinii
+                    </span>
                   )}
                 </td>
               </tr>

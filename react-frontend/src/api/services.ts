@@ -15,6 +15,13 @@ export interface OrderItem {
   quantity: number;
 }
 
+export interface Opinion {
+  id?: number;
+  createdAt?: string;
+  rating: number;
+  content: string;
+}
+
 export interface Order {
   id?: number;
   username: string;

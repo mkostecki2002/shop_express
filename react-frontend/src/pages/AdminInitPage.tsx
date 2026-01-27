@@ -4,7 +4,6 @@ import { useApp } from "../contexts/AppContext";
 
 export default function AdminInitPage() {
   const [fileContent, setFileContent] = useState<string | null>(null);
-  const [fileType, setFileType] = useState<string>("");
   const { setMessage, handleError } = useApp();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,7 +14,6 @@ export default function AdminInitPage() {
     reader.onload = event => {
       const text = event.target?.result as string;
       setFileContent(text);
-      setFileType(file.type || "text/plain");
     };
     reader.readAsText(file);
   };
@@ -36,7 +34,7 @@ export default function AdminInitPage() {
         // Prymitywna walidacja CSV
         isValid = true;
       }
-    } catch (e) {
+    } catch {
       isValid = false;
     }
 
