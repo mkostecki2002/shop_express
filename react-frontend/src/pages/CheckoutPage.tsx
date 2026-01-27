@@ -13,7 +13,7 @@ export default function CheckoutPage() {
     email: "",
     phoneNumber: "",
   });
-  const { setMessage, setErrorMessage, errorMessage } = useApp();
+  const { setMessage, handleError } = useApp();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -40,9 +40,7 @@ export default function CheckoutPage() {
       setMessage("Zamówienie zostało złożone.");
       navigate("/products");
     } catch (e: any) {
-      setErrorMessage(
-        e.response?.data?.message || "Unexpected error during order creation",
-      );
+      handleError(e);
     }
   };
 

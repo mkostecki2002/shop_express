@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useApp } from "../contexts/AppContext";
 
 export default function LoginPage() {
   const [creds, setCreds] = useState({ username: "", password: "" });
   const { login } = useAuth();
+  const { handleError } = useApp();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -12,8 +14,8 @@ export default function LoginPage() {
     try {
       await login(creds);
       navigate("/products");
-    } catch {
-      alert("Błąd logowania");
+    } catch (err: any) {
+      handleError(err);
     }
   };
 

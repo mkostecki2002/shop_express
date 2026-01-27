@@ -12,7 +12,7 @@ export const api = axios.create({
 // Interceptor do dodawania tokena
 api.interceptors.request.use(
   config => {
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -28,21 +28,20 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refreshToken = localStorage.getItem("refreshToken");
+      const refreshToken = sessionStorage.getItem("refreshToken");
 
       if (refreshToken) {
         try {
           const { data } = await axios.post(`${API_URL}refresh`, {
             refreshToken,
           });
-          localStorage.setItem("accessToken", data.accessToken);
+          sessionStorage.setItem("accessToken", data.accessToken);
           api.defaults.headers.common["Authorization"] =
             `Bearer ${data.accessToken}`;
           return api(originalRequest);
-        } catch (refreshError) {
-          // Jeśli refresh się nie uda, wyloguj
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+        } catch {
+          sessionStorage.removeItem("accessToken");
+          sessionStorage.removeItem("refreshToken");
           window.location.href = "/login";
         }
       }

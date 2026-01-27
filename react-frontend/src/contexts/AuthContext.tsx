@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { jwtDecode } from "jwt-decode"; // Należy doinstalować: npm install jwt-decode
+import { jwtDecode } from "jwt-decode";
 import { loginUser, logoutUser } from "../api/services";
 
 interface User {
@@ -21,30 +21,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (token) {
       try {
         const decoded = jwtDecode<User>(token);
         setUser(decoded);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
-        localStorage.removeItem("accessToken");
+      } catch {
+        sessionStorage.removeItem("accessToken");
       }
     }
   }, []);
 
   const login = async (creds: unknown) => {
     const { data } = await loginUser(creds);
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("refreshToken", data.refreshToken);
+    sessionStorage.setItem("accessToken", data.accessToken);
+    sessionStorage.setItem("refreshToken", data.refreshToken);
     const decoded = jwtDecode<User>(data.accessToken);
     setUser(decoded);
   };
 
   const logout = () => {
     logoutUser().finally(() => {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
       setUser(null);
     });
   };
@@ -58,5 +57,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext)!;

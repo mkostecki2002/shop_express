@@ -6,7 +6,7 @@ import { useApp } from "../contexts/AppContext";
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filterStatus, setFilterStatus] = useState("ALL");
-  const { setIsLoading } = useApp();
+  const { setIsLoading, handleError } = useApp();
 
   useEffect(() => {
     loadOrders();
@@ -17,8 +17,8 @@ export default function AdminOrdersPage() {
       setIsLoading(true);
       const { data } = await getOrders();
       setOrders(data);
-    } catch (e) {
-      alert("Błąd pobierania zamówień");
+    } catch (e: any) {
+      handleError(e);
     } finally {
       setIsLoading(false);
     }
@@ -29,7 +29,7 @@ export default function AdminOrdersPage() {
       await updateOrderStatus(id, newStatus);
       loadOrders();
     } catch (e: any) {
-      alert(e.response?.data?.message || "Error updating order status");
+      handleError(e);
     }
   };
 
@@ -38,7 +38,6 @@ export default function AdminOrdersPage() {
       ? orders
       : orders.filter(o => o.orderState?.name === filterStatus);
 
-  // Filtrowanie "Niezrealizowanych" dla spełnienia wymogu
   const unfulfilled = orders.filter(
     o =>
       o.orderState?.name !== "COMPLETED" && o.orderState?.name !== "CANCELLED",
@@ -48,7 +47,6 @@ export default function AdminOrdersPage() {
     <div className="container">
       <h2>Panel Zamówień</h2>
 
-      {/* Sekcja Niezrealizowanych */}
       <div className="card mb-4 border-danger">
         <div className="card-header bg-danger text-white">
           Niezrealizowane Zamówienia
@@ -92,7 +90,6 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Tabela Wszystkich / Po statusie */}
       <h4>Wszystkie zamówienia</h4>
       <div className="mb-3">
         <label className="me-2">Filtruj stan:</label>

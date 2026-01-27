@@ -28,7 +28,6 @@ export default function Navbar() {
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            {/* Wspólne */}
             <li className="nav-item">
               <Link
                 className={`nav-link ${isActive("/products")}`}
@@ -46,7 +45,6 @@ export default function Navbar() {
               </Link>
             </li>
 
-            {/* Tylko KLIENT */}
             {user?.role === "CUSTOMER" && (
               <>
                 <li className="nav-item">
@@ -60,7 +58,6 @@ export default function Navbar() {
               </>
             )}
 
-            {/* Tylko ADMIN */}
             {user?.role === "ADMIN" && (
               <>
                 <li className="nav-item">

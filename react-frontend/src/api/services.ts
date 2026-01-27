@@ -39,13 +39,10 @@ export const updateProduct = (id: number, data: Partial<Product>) =>
 export const getSeoDescription = (id: number) =>
   api.get(`/products/${id}/seo-description`, { responseType: "text" });
 
-// Zamówienia
 export const createOrder = (order: Order) => api.post("/orders", order);
 
-// Admin pobiera wszystkie
 export const getOrders = () => api.get<Order[]>("/orders");
 
-// Klient pobiera swoje (NOWE)
 export const getMyOrders = () => api.get<Order[]>("/orders/me");
 
 export const getOrdersByStatus = (status: string) =>
@@ -57,7 +54,6 @@ export const addOpinion = (
   data: { rating: number; content: string },
 ) => api.post(`/orders/${orderId}/opinions`, data);
 
-// Inne
 export const initDatabase = (data: any, contentType: string) =>
   api.post("/init", data, { headers: { "Content-Type": contentType } });
 export const getOrderStates = () => api.get("/status");

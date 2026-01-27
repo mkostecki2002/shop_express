@@ -1,8 +1,14 @@
-import React from "react"; 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
-import { AppProvider } from "./contexts/AppContext.tsx";
+import { AppProvider, useApp } from "./contexts/AppContext.tsx";
 import Navbar from "./components/Navbar";
 import ProductListPage from "./pages/ProductListPage";
 import CheckoutPage from "./pages/CheckoutPage";
@@ -14,6 +20,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import UserOrdersPage from "./pages/UserOrdersPage";
 import { ErrorBanner } from "./components/ErrorBanner.tsx";
 import { MessageBanner } from "./components/MessageBanner.tsx";
+import ErrorPage from "./pages/ErrorPage.tsx";
+import { LoadingOverlay } from "./components/LoadingOverlay.tsx";
 
 // Komponent chroniący trasy
 const ProtectedRoute = ({
@@ -21,7 +29,7 @@ const ProtectedRoute = ({
   role,
 }: {
   // 2. ZMIEŃ JSX.Element NA React.ReactNode
-  children: React.ReactNode; 
+  children: React.ReactNode;
   role?: string;
 }) => {
   const { user, isAuthenticated } = useAuth();
@@ -34,18 +42,32 @@ const ProtectedRoute = ({
   return <>{children}</>;
 };
 
-function AppRoutes() {
+// --- NOWY KOMPONENT: LAYOUT GŁÓWNY ---
+// Ten komponent zawiera elementy widoczne na standardowych stronach
+const MainLayout = () => {
+  const { isLoading } = useApp();
+
   return (
     <>
+      <LoadingOverlay isVisible={isLoading} message="Proszę czekać..." />
       <Navbar />
       <ErrorBanner />
       <MessageBanner />
-      <Routes>
+      <Outlet />
+    </>
+  );
+};
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
         <Route path="/" element={<Navigate to="/products" />} />
         <Route path="/products" element={<ProductListPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+
         <Route
           path="/my-orders"
           element={
@@ -72,15 +94,22 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-      </Routes>
-    </>
+      </Route>
+
+      {/* GRUPA 2: Strony samodzielne (BEZ Navbara i Banerów) */}
+      {/* Są poza MainLayout, więc renderują się na czystej stronie */}
+      <Route path="/error-page" element={<ErrorPage />} />
+
+      {/* Catch-all przekierowuje do error-page */}
+      <Route path="*" element={<Navigate to="/error-page" replace />} />
+    </Routes>
   );
 }
 
 function App() {
   return (
     <BrowserRouter>
-      <AppProvider> 
+      <AppProvider>
         <AuthProvider>
           <CartProvider>
             <AppRoutes />

@@ -15,17 +15,20 @@ export default function ProductListPage() {
   const [categories, setCategories] = useState<{ name: string }[]>([]);
   const [filterName, setFilterName] = useState("");
   const [filterCat, setFilterCat] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Edycja
+  const ITEMS_PER_PAGE = 3;
+
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editForm, setEditForm] = useState<Partial<Product>>({});
 
   const { user } = useAuth();
   const { addToCart } = useCart();
-  const { handleError, setMessage } = useApp();
+  const { handleError, setMessage, setIsLoading } = useApp();
 
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       const [pData, cData] = await Promise.all([
         getProducts(),
         getCategories(),
@@ -33,9 +36,14 @@ export default function ProductListPage() {
       setProducts(pData.data ?? []);
       setCategories(cData.data ?? []);
     } catch (err: any) {
+      console.error(err);
       handleError(err);
       setProducts([]);
       setCategories([]);
+    } finally {
+      {
+        setIsLoading(false);
+      }
     }
   };
   useEffect(() => {
@@ -44,7 +52,7 @@ export default function ProductListPage() {
     })();
   }, []);
 
-  const filtered = useMemo(() => {
+  const filteredProducts = useMemo(() => {
     let result = products;
 
     if (filterName) {
@@ -63,6 +71,24 @@ export default function ProductListPage() {
   const handleEditClick = (p: Product) => {
     setEditingProduct(p);
     setEditForm({ ...p });
+  };
+
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+
+  const currentVisibleProducts = filteredProducts.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+
+  // Funkcja zmiany strony
+  const changePage = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
   const handleSave = async () => {
@@ -97,7 +123,7 @@ export default function ProductListPage() {
           <input
             type="text"
             className="form-control"
-            placeholder="Szukaj po nazwie..."
+            placeholder="Szukaj..."
             value={filterName}
             onChange={e => setFilterName(e.target.value)}
           />
@@ -131,7 +157,7 @@ export default function ProductListPage() {
           </tr>
         </thead>
         <tbody>
-          {filtered.map(p => (
+          {currentVisibleProducts.map(p => (
             <tr key={p.id}>
               <td>{p.name}</td>
               <td dangerouslySetInnerHTML={{ __html: p.description }}></td>
@@ -229,6 +255,52 @@ export default function ProductListPage() {
           </div>
         </div>
       )}
+
+      {totalPages > 1 && (
+        <nav>
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => changePage(currentPage - 1)}
+              >
+                Poprzednia
+              </button>
+            </li>
+
+            {[...Array(totalPages)].map((_, index) => {
+              const pageNum = index + 1;
+              return (
+                <li
+                  key={pageNum}
+                  className={`page-item ${currentPage === pageNum ? "active" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => changePage(pageNum)}
+                  >
+                    {pageNum}
+                  </button>
+                </li>
+              );
+            })}
+
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => changePage(currentPage + 1)}
+              >
+                Następna
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
+      <div className="text-center text-muted small">
+        Strona {currentPage} z {totalPages} (Wszystkich produktów: {totalItems})
+      </div>
     </div>
   );
 }

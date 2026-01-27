@@ -11,26 +11,26 @@ export default function RegisterPage() {
     phoneNumber: "",
     role: "CUSTOMER",
   });
-  // Stan do pokazywania/ukrywania hasła 
+  // Stan do pokazywania/ukrywania hasła
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const navigate = useNavigate();
   const { setMessage, handleError } = useApp();
 
   // Funkcja generująca silne hasło
   const generateStrongPassword = () => {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    const chars =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
     const length = 12;
     let password = "";
-    // Używamy crypto.getRandomValues dla lepszego bezpieczeństwa losowości
+    // crypto.getRandomValues dla lepszego bezpieczeństwa losowości
     const array = new Uint32Array(length);
     window.crypto.getRandomValues(array);
-    
+
     for (let i = 0; i < length; i++) {
       password += chars[array[i] % chars.length];
     }
 
-    // Aktualizujemy formularz i pokazujemy hasło, żeby użytkownik mógł je zobaczyć/skopiować
     setForm(prev => ({ ...prev, password: password }));
     setShowPassword(true);
   };
@@ -51,7 +51,7 @@ export default function RegisterPage() {
       <div className="container d-flex justify-content-center mt-5">
         <form className="card p-4 col-md-5" onSubmit={handleRegister}>
           <h3 className="text-center">Rejestracja</h3>
-          
+
           <div className="mb-2">
             <label className="form-label">Login</label>
             <input
@@ -95,17 +95,18 @@ export default function RegisterPage() {
                 placeholder="Hasło"
                 required
                 value={form.password}
-                onChange={e => setForm({ ...form, password: e.target.value })}/>
-              <button 
-                type="button" 
+                onChange={e => setForm({ ...form, password: e.target.value })}
+              />
+              <button
+                type="button"
                 className="btn btn-outline-secondary"
                 onClick={() => setShowPassword(!showPassword)}
-                title="Pokaż/Ukryj hasło">
-
+                title="Pokaż/Ukryj hasło"
+              >
                 {showPassword ? "Ukryj" : "Pokaż"}
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="btn btn-outline-primary"
                 onClick={generateStrongPassword}
                 title="Wygeneruj losowe silne hasło"

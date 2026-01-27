@@ -1,6 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
+import { AppErrorCode } from "../api/AppErrorCodes";
+import { getErrorMessage } from "../api/ErrorMapping";
 
 interface AppError {
   status: number;
@@ -62,12 +65,45 @@ export function AppProvider({ children }: AppProviderProps) {
     setMessage(null);
   };
 
-  const handleError = (err: AppError): void => {
-    setErrorMessage(err.message);
-    setErrorStatus(err.status);
+  const handleError = (err: any) => {
+    let status = 0;
+    let code: string = AppErrorCode.Unknown;
+    let apiMessage = "";
 
-    if (err.status >= 500 || err.status === 0 || err.status === 404) {
+    if (isAxiosError(err)) {
+      if (err.response) {
+        status = err.response.status;
+        const data = err.response.data as any;
+        code = data?.code || AppErrorCode.Unknown;
+        apiMessage = data?.message;
+      } else if (err.request) {
+        status = 0;
+        code = AppErrorCode.NetworkError;
+      }
+    } else {
+      // Błąd JS / Inny
+      status = -1;
+      apiMessage = err.message;
+    }
+
+    // Pobierz ładny komunikat po polsku
+    const userFriendlyMessage = getErrorMessage(code, apiMessage);
+
+    // Błędy Krytyczne -> Przekierowanie na stronę błędu
+    if (status === 0 || status >= 500 || status === 404) {
+      setErrorStatus(status);
+      setErrorMessage(userFriendlyMessage);
       navigate("/error-page");
+      return;
+    }
+
+    // Błędy Użytkownika -> Baner
+    setErrorStatus(status);
+    setErrorMessage(userFriendlyMessage);
+
+    // Autoryzacja -> Przekierowanie do logowania
+    if (status === 401 || status === 403) {
+      navigate("/login");
     }
   };
 
