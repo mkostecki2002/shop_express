@@ -22,6 +22,7 @@ export default function CheckoutPage() {
     if (isAuthenticated === false) {
       setMessage("Stwórz konto i dokończ zamówienie.");
       navigate("/register");
+      return;
     }
 
     try {
@@ -109,7 +110,6 @@ export default function CheckoutPage() {
       </table>
 
       <h3 className="mt-4">Dane Kontaktowe</h3>
-      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
       <form onSubmit={handleSubmit} className="card p-4 bg-light">
         <div className="mb-3">
           <label>Nazwa użytkownika</label>

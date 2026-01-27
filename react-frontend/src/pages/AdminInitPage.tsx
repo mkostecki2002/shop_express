@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { initDatabase } from "../api/services";
+import { useApp } from "../contexts/AppContext";
 
 export default function AdminInitPage() {
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string>("");
+  const { setMessage, handleError } = useApp();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -13,7 +15,7 @@ export default function AdminInitPage() {
     reader.onload = event => {
       const text = event.target?.result as string;
       setFileContent(text);
-      setFileType(file.type || "text/plain"); // Domyślnie text/plain dla CSV
+      setFileType(file.type || "text/plain");
     };
     reader.readAsText(file);
   };
@@ -47,15 +49,15 @@ export default function AdminInitPage() {
         ? "application/json"
         : "text/plain";
       await initDatabase(fileContent, contentType);
-      alert("Baza zainicjalizowana pomyślnie!");
+      setMessage("Baza zainicjalizowana pomyślnie!");
     } catch (e: any) {
-      alert("Błąd: " + (e.response?.data?.message || e.message));
+      handleError(e);
     }
   };
 
   return (
     <div className="container">
-      <h2>Inicjalizacja Bazy Danych (D3)</h2>
+      <h2>Inicjalizacja Bazy Danych</h2>
       <p>Wgraj plik JSON lub CSV, aby uzupełnić produkty.</p>
       <div className="mb-3">
         <input
