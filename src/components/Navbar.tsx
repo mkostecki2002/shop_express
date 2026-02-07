@@ -4,7 +4,7 @@ import { useCart } from "../contexts/CartContext.tsx";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const { cart } = useCart();
+  const { cartLength } = useCart();
   const location = useLocation();
 
   const isActive = (path: string) =>
@@ -40,7 +40,7 @@ export default function Navbar() {
               <Link className={`nav-link ${isActive("/cart")}`} to="/checkout">
                 Koszyk{" "}
                 <span className="badge bg-light text-dark ms-1">
-                  {cart.length}
+                  {cartLength()}
                 </span>
               </Link>
             </li>
