@@ -18,7 +18,7 @@ import { OrderState } from "./entity/OrderState";
 
 // Aplikacja Express
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -85,6 +85,7 @@ app.post(
           skip_empty_lines: true,
           trim: true,
         });
+        console.log("Parsed products from CSV:", products);
       } else {
         return res
           .status(StatusCodes.UNSUPPORTED_MEDIA_TYPE)

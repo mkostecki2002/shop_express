@@ -33,9 +33,20 @@ export interface Order {
   opinions?: any[];
 }
 
+export interface UserRequest {
+  username: string;
+  password: string;
+}
+
+export interface RegisterRequest extends UserRequest {
+  email: string;
+  phoneNumber: string;
+}
+
 // Auth
-export const loginUser = (creds: any) => api.post("/login", creds);
-export const registerUser = (data: any) => api.post("/register", data);
+export const loginUser = (user: UserRequest) => api.post("/login", user);
+export const registerUser = (data: RegisterRequest) =>
+  api.post("/register", data);
 export const logoutUser = () => api.post("/logout");
 
 // Produkty

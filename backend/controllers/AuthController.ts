@@ -32,7 +32,6 @@ router.post("/login", async (req: Request, res: Response) => {
       "7d",
       "refresh",
     );
-
     const decoded = jwt.decode(refreshToken) as { exp: number; iat: number };
 
     const refreshTokenEntity = new RefreshToken();
@@ -44,7 +43,6 @@ router.post("/login", async (req: Request, res: Response) => {
     AppDataSource.getRepository("RefreshToken").save(refreshTokenEntity);
 
     res.status(StatusCodes.OK).json({
-      //Domyslnie 1h waznosci accessTokena
       accessToken: generateJwt({ sub: user.id, role: user.role }),
       refreshToken: refreshToken,
     });

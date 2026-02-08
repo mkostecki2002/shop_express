@@ -17,7 +17,7 @@ export default function ProductListPage() {
   const [filterCat, setFilterCat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const ITEMS_PER_PAGE = 3;
+  const ITEMS_PER_PAGE = 10;
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editForm, setEditForm] = useState<Partial<Product>>({});
@@ -33,6 +33,8 @@ export default function ProductListPage() {
         getProducts(),
         getCategories(),
       ]);
+      console.log("Fetched products:", pData);
+      console.log("Fetched categories:", cData);
       setProducts(pData.data ?? []);
       setCategories(cData.data ?? []);
     } catch (err: any) {
@@ -52,7 +54,7 @@ export default function ProductListPage() {
     })();
   }, []);
 
-  useEffect(() => {
+  const filteredProducts = useMemo(() => {
     let result = products;
 
     if (filterName) {
@@ -65,8 +67,7 @@ export default function ProductListPage() {
       result = result.filter(p => p.category?.name === filterCat);
     }
 
-    setProducts(result);
-    setCurrentPage(1);
+    return result;
   }, [products, filterName, filterCat]);
 
   const handleEditClick = (p: Product) => {
@@ -139,7 +140,7 @@ export default function ProductListPage() {
             onChange={e => setFilterCat(e.target.value)}
           >
             <option value="">Wszystkie kategorie</option>
-            {categories.map(c => (
+            {categories?.map(c => (
               <option key={c.name} value={c.name}>
                 {c.name}
               </option>
@@ -160,7 +161,7 @@ export default function ProductListPage() {
           </tr>
         </thead>
         <tbody>
-          {currentVisibleProducts.map(p => (
+          {currentVisibleProducts?.map(p => (
             <tr key={p.id}>
               <td>{p.name}</td>
               <td dangerouslySetInnerHTML={{ __html: p.description }}></td>
@@ -269,7 +270,7 @@ export default function ProductListPage() {
               </button>
             </li>
 
-            {[...Array(totalPages)].map((_, index) => {
+            {[...Array(totalPages)]?.map((_, index) => {
               const pageNum = index + 1;
               return (
                 <li

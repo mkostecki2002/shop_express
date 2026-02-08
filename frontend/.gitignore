@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 node_modules/
+build/
+dist/
+package-*.json
+tsconfig.*.json

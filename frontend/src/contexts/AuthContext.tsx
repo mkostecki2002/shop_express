@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 import { loginUser, logoutUser } from "../api/services";
+import type { UserRequest } from "../api/services";
 
 interface User {
   sub: number;
@@ -10,7 +11,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (creds: unknown) => Promise<void>;
+  login: (creds: UserRequest) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -31,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return null;
   });
 
-  const login = async (creds: unknown) => {
+  const login = async (creds: UserRequest) => {
     const { data } = await loginUser(creds);
     sessionStorage.setItem("accessToken", data.accessToken);
     sessionStorage.setItem("refreshToken", data.refreshToken);
